@@ -1,1 +1,7 @@
-# Study_Manager
+# ✍️ 스터디 관리 서비스
+Google 로그인을 지원하는 스터디 관리 프로젝트
+
+## 현재 구현된 기능
+* **Auth**: Google OAuth2 로그인 및 JWT 토큰 발급
+* **Study**: 스터디 그룹 생성 및 관리
+* **Subject**: 스터디별 세부 공부 과목 등록
