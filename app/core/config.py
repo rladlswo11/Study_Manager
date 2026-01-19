@@ -11,7 +11,10 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key")
     ALGORITHM: str = "HS256"
 
+    authlib_insecure_transport: str = "false"
+
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
 settings = Settings()
