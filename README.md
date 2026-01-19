@@ -33,8 +33,9 @@ uvicorn app.main:app --reload
 프로젝트 루트 폴더에 .env 파일을 생성하고 아래 내용을 입력하세요. (본인의 API 키가 필요합니다.)
 ```env
 # .env 파일 예시 (본인의 키로 교체 필요)
-GOOGLE_CLIENT_ID=여러분의_구글_클라이언트_ID
-GOOGLE_CLIENT_SECRET=여러분의_구글_클라이언트_시크릿
+GOOGLE_CLIENT_ID=본인의_구글_클라이언트_ID
+GOOGLE_CLIENT_SECRET=본인의_구글_클라이언트_시크릿
 SECRET_KEY=임의의_긴_문자열
 ALGORITHM=HS256
 ```
+
