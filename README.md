@@ -35,7 +35,9 @@ uvicorn app.main:app --reload
 # .env 파일 예시 (본인의 키로 교체 필요)
 GOOGLE_CLIENT_ID=본인의_구글_클라이언트_ID
 GOOGLE_CLIENT_SECRET=본인의_구글_클라이언트_시크릿
-SECRET_KEY=임의의_긴_문자열
+SECRET_KEY=9a7f3c0e3d5b8f8b6a9c7f0d3b6e4f2a9d8c1e7b0a4f5c6d8e9f1a2b3c4d5e
 ALGORITHM=HS256
+AUTHLIB_INSECURE_TRANSPORT=true
 ```
+
 
