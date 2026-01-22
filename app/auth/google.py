@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Request, Depends
 from sqlalchemy.orm import Session
 from authlib.integrations.starlette_client import OAuth
+from fastapi import Header, HTTPException, status
+from jose import jwt, JWTError
 
 from app.core.config import settings
 from app.core.database import get_db
@@ -20,7 +22,6 @@ oauth.register(
         "scope": "openid email profile"
     },
 )
-
 
 @router.get("/login")
 async def login(request: Request):
@@ -75,3 +76,29 @@ async def callback(request: Request, db: Session = Depends(get_db)):
             "name": user.name
         }
     }
+
+# 토큰을 검증해서 현재 유저 객체를 반환하는 함수
+async def get_current_user(
+    authorization: str = Header(None), 
+    db: Session = Depends(get_db)
+):
+    if not authorization:
+        raise HTTPException(status_code=401, detail="토큰이 없습니다.")
+
+    try:
+        # "Bearer <token>" 형태에서 토큰만 추출
+        token = authorization.split(" ")[1]
+        # 토큰 해독 (보안 설정에 맞춰 SECRET_KEY 등이 필요할 수 있음)
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        user_id: int = payload.get("user_id")
+        
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="유효하지 않은 토큰입니다.")
+    except (JWTError, IndexError):
+        raise HTTPException(status_code=401, detail="토큰 해독에 실패했습니다.")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다.")
+    
+    return user

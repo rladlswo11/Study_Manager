@@ -17,6 +17,8 @@ from app.routers.user import router as user_router
 from app.core.config import settings
 from app.routers.study import router as study_router
 from app.routers.subject import router as subject_router
+from app.routers.study_goal import router as study_goal_router
+from app.routers.record import router as record_router
 
 # 2️⃣ FastAPI 앱 초기화
 app = FastAPI(
@@ -53,6 +55,8 @@ app.include_router(user_router)
 app.include_router(google_router)
 app.include_router(study_router)
 app.include_router(subject_router)
+app.include_router(study_goal_router)
+app.include_router(record_router)
 
 # 6️⃣ 헬스체크 및 환경 확인
 @app.get("/ping", tags=["Health"])
