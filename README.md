@@ -40,7 +40,13 @@ ALGORITHM=HS256
 AUTHLIB_INSECURE_TRANSPORT=true
 ```
 
-4. **지우와여러분을위한! 로그인 방법**
-5. 
+4. **여러분을위한!(나를위한..) 로그인 방법**
+   * cmd에서 파일 위치로 들어간 후: py -3 -m uvicorn app.main:app --reload
+   * 브라우저에서 확인하기: http://localhost:8000/docs
+   * 구글 로그인: http://localhost:8000/auth/google/login
+   * access_token 뒤 " " 복사해주세여
+   * POST /studies/ 에서 Try it out → Execute 입력
+   * POST /studies/join 에서 이름 비번 되는지 확인!
+
 
 
