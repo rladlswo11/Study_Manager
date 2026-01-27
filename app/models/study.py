@@ -7,13 +7,19 @@ class Study(Base):
     __tablename__ = "studies"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    description = Column(String, nullable=True) # 추가됨
-    fine_per_absence = Column(Integer, default=0) # 이 줄도 있어야 합니다!
+
+    # 방 이름으로 입장하려면 중복 방이름을 막는 게 안전함
+    name = Column(String, nullable=False, unique=True)
+
+    description = Column(String, nullable=True)
+
+    # ✅ 방 비밀번호는 평문 저장 금지 -> 해시 저장
+    password_hash = Column(String, nullable=False)
+
+    fine_per_absence = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     members = relationship("StudyMember", back_populates="study")
-
     subjects = relationship("Subject", back_populates="study")
 
 class StudyMember(Base):
@@ -26,3 +32,4 @@ class StudyMember(Base):
     joined_at = Column(DateTime, default=datetime.utcnow)
 
     study = relationship("Study", back_populates="members")
+    user = relationship("User", back_populates="study_members")
