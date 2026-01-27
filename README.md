@@ -40,4 +40,7 @@ ALGORITHM=HS256
 AUTHLIB_INSECURE_TRANSPORT=true
 ```
 
+4. **지우와여러분을위한! 로그인 방법**
+5. 
+
 
