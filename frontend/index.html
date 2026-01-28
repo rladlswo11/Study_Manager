@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>스터디 관리</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <h1>📚 스터디 관리 서비스</h1>
+
+ <!-- 로그인 화면 -->
+<div id="loginPage">
+  <p>로그인이 필요합니다</p>
+  <button id="loginBtn" class="btn btn-primary">Google로 로그인</button>
+</div>
+
+ <!-- 스터디 그룹 목록 화면 -->
+<div id="groupListPage" style="display: none;">
+  <div class="topbar">
+    <p id="userInfo" class="user"></p>
+    <button id="logoutBtn" class="btn btn-ghost">로그아웃</button>
+  </div>
+  
+
+  <h2>내 스터디 그룹</h2>
+
+  <div class="inputRow">
+    <input id="groupInput" type="text" placeholder="새 스터디 그룹 이름" />
+    <button id="createGroupBtn" class="btn btn-primary">그룹 생성</button>
+  </div>
+
+  <ul id="groupList" class="list"></ul>
+</div>
+
+ <!-- 스터디 그룹 내부 화면 -->
+<div id="groupDetailPage" style="display: none;">
+  <div class="topbar">
+    <button id="backToGroupsBtn" class="btn btn-ghost">← 그룹 목록</button>
+    <p id="currentGroupTitle" class="user"></p>
+  </div> 
+
+  <h2>그룹 관리</h2>
+
+  <div class="inputRow">
+    <button id="memberManageBtn" class="btn btn-ghost">👥 멤버 관리</button>
+    <button id="planBtn" class="btn btn-primary">📅 개인 스터디 계획 세우기</button>
+  </div>
+
+  <div id="groupDetailHint" style="color:#555; font-size:14px;">
+    위 버튼을 눌러 기능 화면으로 이동할 수 있어요.
+  </div>
+</div>
+
+ <!-- 개인 스터디 계획 화면 -->
+<div id="planPage" style="display: none;">
+  <div class="topbar">
+    <button id="backToGroupDetailBtn" class="btn btn-ghost">← 그룹으로</button>
+    <p id="planTitle" class="user"></p>
+  </div>
+
+  <h2>내 스터디 계획</h2>
+
+  <div class="inputRow">
+    <input id="subjectInput" type="text" placeholder="과목/공부 항목 (예: 자료구조, 토익 RC)" />
+    <button id="addSubjectBtn" class="btn btn-primary">추가</button>
+  </div>
+
+  <ul id="subjectList" class="list"></ul>
+
+  <div style="margin-top:10px; color:#666; font-size:13px;">
+    * 지금은 브라우저에만 저장돼요(새로고침하면 사라짐). 다음에 FastAPI/DB로 저장하게 만들 거예요.
+  </div>
+</div>
+
+
+
+ <script src="js/api.js"></script>
+ <script src="js/script.js"></script>
+
+</body>
+</html>
+
+
