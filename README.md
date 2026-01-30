@@ -48,5 +48,12 @@ AUTHLIB_INSECURE_TRANSPORT=true
    * POST /studies/ 에서 Try it out → Execute 입력
    * POST /studies/join 에서 이름 비번 되는지 확인!
 
+5. ngrok
+   * 문서 확인 : https://evie-lawyerly-maxima.ngrok-free.dev/docs
+   * OpenAPI JSON 확인 : https://evie-lawyerly-maxima.ngrok-free.dev/openapi.json
+   * 요청 들어오는지 확인 : http://127.0.0.1:4040
+   * 이렇게 reload해야된다네요 : py -3 -m uvicorn app.main:app --reload --port 8000 --proxy-headers --forwarded-allow-ips="*"
+
+
 
 
