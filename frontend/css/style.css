@@ -15,7 +15,7 @@ h1 {
 }
 
 
-#loginPage, #groupListPage, #groupDetailPage, #planPage {
+#loginPage, #groupListPage, #groupDetailPage, #planPage, #memberPage {
   max-width: 720px;
   margin: 40px auto;
   padding: 20px;
@@ -122,3 +122,5 @@ input:focus{
 }
 
 .deleteBtn:hover{ filter: brightness(0.95); }
+
+

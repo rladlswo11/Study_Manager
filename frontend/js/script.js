@@ -29,6 +29,100 @@ const subjectInput = document.getElementById("subjectInput");
 const addSubjectBtn = document.getElementById("addSubjectBtn");
 const subjectList = document.getElementById("subjectList");
 
+const memberPage = document.getElementById("memberPage");
+const memberTitle = document.getElementById("memberTitle");
+const backToGroupDetailFromMemberBtn = document.getElementById("backToGroupDetailFromMemberBtn");
+
+const inviteEmailInput = document.getElementById("inviteEmailInput");
+const inviteMemberBtn = document.getElementById("inviteMemberBtn");
+const memberList = document.getElementById("memberList");
+
+//임시 멤버 저장소 + 렌더 함수 추가
+const membersByGroupId = {}; // { [groupId]: [{email: "..."}] }
+
+function getMembers(groupId) {
+  if (!membersByGroupId[groupId]) membersByGroupId[groupId] = [];
+  return membersByGroupId[groupId];
+}
+
+function renderMembers() {
+  const members = getMembers(currentGroup.id);
+  memberList.innerHTML = "";
+
+  if (members.length === 0) {
+    const li = document.createElement("li");
+    li.innerHTML = `<span style="font-weight:500; color:#666;">아직 멤버가 없어요. 이메일로 초대해보자!</span>`;
+    memberList.appendChild(li);
+    return;
+  }
+
+  members.forEach((m, idx) => {
+    const li = document.createElement("li");
+
+    const left = document.createElement("span");
+    left.textContent = m.email;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "deleteBtn";
+    removeBtn.textContent = "삭제";
+
+    removeBtn.addEventListener("click", () => {
+      const ok = confirm(`"${m.email}" 멤버를 목록에서 제거할까?`);
+      if (!ok) return;
+      members.splice(idx, 1);
+      renderMembers();
+    });
+
+    li.appendChild(left);
+    li.appendChild(removeBtn);
+    memberList.appendChild(li);
+  });
+}
+
+memberManageBtn.addEventListener("click", () => {
+  memberTitle.textContent = `👥 ${currentGroup.name} 멤버`;
+  showPage("memberPage");
+  renderMembers();
+});
+
+backToGroupDetailFromMemberBtn.addEventListener("click", () => {
+  showPage("groupDetail");
+});
+
+function inviteMember() {
+  const email = inviteEmailInput.value.trim();
+
+  // 매우 가벼운 이메일 체크
+  if (!email || !email.includes("@")) {
+    alert("이메일을 올바르게 입력해줘!");
+    return;
+  }
+
+  const members = getMembers(currentGroup.id);
+  const exists = members.some(
+    m => m.email.toLowerCase() === email.toLowerCase()
+  );
+  if (exists) {
+    alert("이미 초대/추가된 멤버야!");
+    return;
+  }
+
+  members.push({ email });
+  inviteEmailInput.value = "";
+  renderMembers();
+}
+
+inviteMemberBtn.addEventListener("click", inviteMember);
+
+inviteEmailInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    inviteMember();
+  }
+});
+
+
+
 
 // 가짜 로그인 유저
 const fakeUser = {
@@ -52,15 +146,16 @@ function showPage(pageName) {
   groupListPage.style.display = "none";
   groupDetailPage.style.display = "none";
   planPage.style.display = "none";
+  memberPage.style.display = "none"; 
 
   if (pageName === "login") loginPage.style.display = "block";
   if (pageName === "groupList") groupListPage.style.display = "block";
   if (pageName === "groupDetail") groupDetailPage.style.display = "block";
   if (pageName === "plan") planPage.style.display = "block"; 
+  if (pageName === "member") memberPage.style.display = "block";
 }
 
 
-// 그룹 리스트 렌더링
 // 그룹 리스트 렌더링
 function renderGroups() {
   groupList.innerHTML = "";
@@ -97,8 +192,9 @@ function renderGroups() {
       // groups에서 제거
       groups.splice(index, 1);
 
-      // (임시) 해당 그룹의 개인 계획 데이터도 제거
+      // (임시) 해당 그룹의 데이터들 제거
       delete myPlansByGroupId[g.id];
+      delete membersByGroupId[g.id];
 
       // 혹시 현재 선택된 그룹이 삭제된 그룹이면 초기화
       if (currentGroup && currentGroup.id === g.id) {
@@ -159,9 +255,10 @@ backToGroupsBtn.addEventListener("click", () => {
 });
 
 
-//멈버관리 계획버튼
+//멈버관리 버튼
 memberManageBtn.addEventListener("click", () => {
-  alert("멤버 관리 페이지(다음 단계에서 구현)");
+  memberTitle.textContent = `👥 ${currentGroup.name} 멤버`;
+  showPage("member");
 });
 
 planBtn.addEventListener("click", async () => {
@@ -244,5 +341,4 @@ addSubjectBtn.addEventListener("click", addSubject);
 subjectInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addSubject();
 });
-
 

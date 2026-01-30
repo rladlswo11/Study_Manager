@@ -52,6 +52,30 @@
   </div>
 </div>
 
+<!-- 멤버 관리 화면 -->
+<div id="memberPage" style="display:none;">
+  <div class="topbar">
+    <button id="backToGroupDetailFromMemberBtn" class="btn btn-ghost">← 그룹으로</button>
+    <p id="memberTitle" class="user"></p>
+  </div>
+
+  <h2>멤버 관리</h2>
+
+  <!-- 초대 -->
+  <div class="inputRow">
+    <input id="inviteEmailInput" type="email" placeholder="초대할 이메일 (예: someone@gmail.com)" />
+    <button id="inviteMemberBtn" class="btn btn-primary">초대</button>
+  </div>
+
+  <p style="margin-top:0; color:#666; font-size:13px;">
+    * 지금은 UI만 동작해요(임시 저장). 나중에 FastAPI로 실제 초대/승인 붙일 거예요.
+  </p>
+
+  <!-- 멤버 목록 -->
+  <ul id="memberList" class="list"></ul>
+</div>
+
+
  <!-- 개인 스터디 계획 화면 -->
 <div id="planPage" style="display: none;">
   <div class="topbar">
