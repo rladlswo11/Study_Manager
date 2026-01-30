@@ -25,11 +25,22 @@ oauth.register(
 
 @router.get("/login")
 async def login(request: Request):
-    request.session["test_session"] = "session_is_working"
+    # 1. 현재 요청이 들어온 도메인을 기반으로 리다이렉트 주소 생성
+    # ngrok으로 들어오면 ngrok 주소가, localhost로 들어오면 localhost 주소가 잡힙니다.
+    base_url = str(request.base_url).rstrip('/')
+    
+    # 만약 ngrok이 http로 인식된다면, https로 강제 변환 (OAuth 보안 필수)
+    if "ngrok-free.dev" in base_url:
+        base_url = base_url.replace("http://", "https://")
+        
+    redirect_uri = f"{base_url}/auth/google/callback"
+    
+    # 디버깅용 출력 (터미널에서 확인 가능)
+    print(f"DEBUG: Generated redirect_uri is {redirect_uri}")
 
-    redirect_uri = "http://localhost:8000/auth/google/callback"
-    # 세션에 강제로 데이터가 써지도록 유도 (일부 환경에서 필요)
+    request.session["test_session"] = "session_is_working"
     request.session['login_fix'] = "true" 
+    
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 
