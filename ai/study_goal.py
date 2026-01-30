@@ -2,10 +2,15 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from typing import List
 
-app = FastAPI(title="Study AI API")
-from ai.difficulty_ai import router as difficulty_router
-app.include_router(difficulty_router)
 from ai.difficulty_ai import get_pace_factor
+
+from ai.difficulty_ai import router as difficulty_router
+from ai.weekly_summary_ai import router as weekly_summary_router
+
+app = FastAPI(title="Study AI API")
+
+app.include_router(difficulty_router)
+app.include_router(weekly_summary_router)
 
 
 # =====================
