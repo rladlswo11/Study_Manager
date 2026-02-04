@@ -1,108 +1,368 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>스터디 관리</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-  <h1>📚 스터디 관리 서비스</h1>
+ <header id="globalHeader">
+  <h1 class="appTitle">📚 스터디 관리 서비스</h1>
+ </header>
 
- <!-- 로그인 화면 -->
-<div id="loginPage">
-  <p>로그인이 필요합니다</p>
-  <button id="loginBtn" class="btn btn-primary">Google로 로그인</button>
-</div>
 
- <!-- 스터디 그룹 목록 화면 -->
-<div id="groupListPage" style="display: none;">
-  <div class="topbar">
-    <p id="userInfo" class="user"></p>
-    <button id="logoutBtn" class="btn btn-ghost">로그아웃</button>
+  <!-- 로그인 화면 -->
+  <section id="loginPage" class="page">
+    <div class="card">
+      <h2>로그인</h2>
+      <p class="muted">지금은 연동 전이라 “가짜 로그인”으로 진행합니다.</p>
+
+      <div class="formRow">
+        <label for="emailInput">이메일</label>
+        <input id="emailInput" type="email" placeholder="you@example.com" />
+      </div>
+
+      <div class="formRow">
+        <label for="nameInput">이름</label>
+        <input id="nameInput" type="text" placeholder="홍길동" />
+      </div>
+
+      <button id="loginBtn" class="btn btn-primary">로그인</button>
+    </div>
+  </section>
+
+  <!-- 스터디 그룹 목록 화면 -->
+  <section id="groupListPage" class="page" style="display:none;">
+    <div class="topbar">
+      <p id="userInfo" class="user"></p>
+      <button id="logoutBtn" class="btn btn-ghost">로그아웃</button>
+    </div>
+
+    <div class="grid2">
+      <!-- 그룹 생성 -->
+      <div class="card">
+        <h2>스터디 그룹 목록</h2>
+
+        <div class="inputRow">
+          <input id="groupInput" type="text" placeholder="새 스터디 방 이름" />
+          <button id="createGroupBtn" class="btn btn-primary">방 생성</button>
+        </div>
+
+        <div id="inviteBox" class="inviteBox" style="display:none;">
+          <div class="inviteRow">
+            <span class="badge">초대 링크</span>
+            <input id="inviteLink" type="text" readonly />
+            <button id="copyInviteBtn" class="btn btn-secondary">복사</button>
+          </div>
+          <p class="muted small">* 조원은 이 링크로만 참여할 수 있어요(연동 전이라 UI만 동작).</p>
+        </div>
+
+        <hr class="sep"/>
+
+        <ul id="groupList" class="list"></ul>
+      </div>
+
+      <!-- 링크로 참여 -->
+      <div class="card">
+        <h2>링크로 참여</h2>
+        <p class="muted">방장이 공유한 초대 링크를 붙여넣고 참여하세요.</p>
+
+        <div class="inputRow">
+          <input id="inviteInput" type="text" placeholder="예) study://join?groupId=..." />
+          <button id="joinByLinkBtn" class="btn btn-primary">참여</button>
+        </div>
+
+        <div class="hintBox">
+          <div class="hintTitle">테스트 팁</div>
+          <div class="muted small">방을 생성하면 초대 링크가 생성됩니다. 복사해서 여기에 붙여넣어보세요.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 그룹 내부(대시보드) -->
+  <section id="groupDetailPage" class="page" style="display:none;">
+    <!-- 그룹 상단바: 타이머 고정 -->
+    <div class="groupHeader">
+      <!-- 왼쪽: 타이틀 + 그룹명 + 내역할 -->
+      <div class="groupHeaderLeft">
+        <div class="groupBrand">
+          <div class="groupAppTitle">📚 스터디 관리 서비스</div>
+
+          <div class="groupMeta">
+            <div id="currentGroupName" class="groupName"></div>
+            <div id="currentGroupRole" class="muted small"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오른쪽: 타이머 -->
+      <div class="timerCard">
+        <div class="timerTop">
+          <span class="badge">타이머</span>
+          <span id="timerStatus" class="muted small">대기</span>
+        </div>
+        <div id="timerDisplay" class="timerDisplay">00:00:00</div>
+        <div class="timerBtns">
+          <button id="timerStartBtn" class="btn btn-primary">공부 시작</button>
+          <button id="timerStopBtn" class="btn btn-secondary" disabled>완료</button>
+          <button id="timerResetBtn" class="btn btn-ghost">리셋</button>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="dashboardLayout">
+      <!-- 좌측 사이드 -->
+      <aside class="sidebar">
+        <button id="backToGroupsBtn" class="btn btn-ghost sideBackBtn">← 그룹 목록</button>
+        <button class="sideBtn active" data-tab="dashboard">메인</button>
+        <button class="sideBtn" data-tab="members">멤버 목록</button>
+        <button class="sideBtn" data-tab="myroom">내 스터디방</button>
+        <button class="sideBtn" data-tab="ranking">랭킹</button>
+      </aside>
+
+      <!-- 중앙 콘텐츠 -->
+      <main class="content">
+        <!-- 탭: 메인 -->
+        <section id="tab-dashboard" class="tab">
+          <div class="contentHeader">
+            <h2>메인 화면</h2>
+            <p class="muted">왼쪽 메뉴로 이동해도 타이머는 유지됩니다.</p>
+          </div>
+
+          <div class="summaryGrid">
+            <div class="miniCard">
+              <div class="miniTitle">출석</div>
+              <div id="attendanceSummary" class="miniValue">-</div>
+              <div class="muted small">이번 달(임시)</div>
+            </div>
+            <div class="miniCard">
+              <div class="miniTitle">벌금</div>
+              <div class="miniValue">준비중</div>
+              <div class="muted small">연동 후</div>
+            </div>
+            <div class="miniCard">
+              <div class="miniTitle">랭킹</div>
+              <div class="miniValue">준비중</div>
+              <div class="muted small">연동 후</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>출석 확인 달력</h3>
+            <p class="muted small">* 지금은 저장/연동 전이라, 그룹별로 임시 데이터로 표시됩니다.</p>
+            <div class="calendarHeader">
+              <button id="calPrevBtn" class="btn btn-ghost">←</button>
+              <div id="calTitle" class="calTitle"></div>
+              <button id="calNextBtn" class="btn btn-ghost">→</button>
+            </div>
+            <div id="calendarGrid" class="calendarGrid"></div>
+            <div class="legend">
+              <span class="legendItem"><span class="dot ok">O</span> 출석</span>
+              <span class="legendItem"><span class="dot mid">△</span> 부분</span>
+              <span class="legendItem"><span class="dot no">X</span> 결석</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 탭: 멤버 목록 -->
+        <section id="tab-members" class="tab" style="display:none;">
+          <div class="contentHeader">
+            <h2>멤버 목록</h2>
+            <p class="muted">방장/멤버 권한에 따라 보이는 기능이 달라요.</p>
+          </div>
+
+          <div class="card">
+            <div class="rowBetween">
+              <h3>멤버</h3>
+              <div id="ownerControls" style="display:none;">
+                <button id="openInviteModalBtn" class="btn btn-primary">멤버 초대</button>
+                <button id="openFineModalBtn" class="btn btn-secondary">벌금 관리</button>
+              </div>
+            </div>
+
+            <ul id="memberList" class="list"></ul>
+
+            <div id="memberOwnerHint" class="hintBox" style="display:none;">
+              <div class="hintTitle">방장 기능(임시)</div>
+              <div class="muted small">초대/벌금 관리는 지금은 버튼만 있습니다. 연동 후 실제 기능을 붙이면 됩니다.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 탭: 내 스터디방 -->
+        <section id="tab-myroom" class="tab" style="display:none;">
+          <div class="contentHeader">
+            <h2>내 스터디방</h2>
+            <p class="muted">과목 설정 / 출석 등록 / 주간요약</p>
+          </div>
+
+          <div class="subTabs">
+            <button class="subBtn active" data-sub="subjects">과목 설정</button>
+            <button class="subBtn" data-sub="attendance">출석 등록</button>
+            <button class="subBtn" data-sub="weekly">주간요약</button>
+          </div>
+
+          <!-- 과목 설정 -->
+          <div id="sub-subjects" class="subPanel">
+            <div class="card">
+              <h3>과목 설정</h3>
+              <p class="muted small">과목 이름/페이지/중요도/난이도/시간/기간 입력 → AI가 오늘 목표 자동 설정(연동 전이라 UI만).</p>
+
+              <div class="formRow">
+                <label>오늘 목표 공부 시간(분)</label>
+                <input id="dailyGoalMinutes" type="number" min="0" placeholder="예) 120" />
+              </div>
+
+              <div class="grid2">
+                <div class="formRow">
+                  <label>과목 이름</label>
+                  <input id="subjectName" type="text" placeholder="예) 수학" />
+                </div>
+                <div class="formRow">
+                  <label>총 페이지 수</label>
+                  <input id="subjectTotalPages" type="number" min="0" placeholder="예) 120" />
+                </div>
+                <div class="formRow">
+                  <label>중요도(1~5)</label>
+                  <input id="subjectImportance" type="number" min="1" max="5" placeholder="예) 4" />
+                </div>
+                <div class="formRow">
+                  <label>난이도(1~5)</label>
+                  <input id="subjectDifficulty" type="number" min="1" max="5" placeholder="예) 3" />
+                </div>
+                <div class="formRow">
+                  <label>기간(일)</label>
+                  <input id="subjectPeriodDays" type="number" min="1" placeholder="예) 14" />
+                </div>
+              </div>
+
+              <div class="rowBetween">
+                <button id="addSubjectBtn" class="btn btn-primary">과목 추가</button>
+                <button id="generateGoalBtn" class="btn btn-secondary">목표 자동설정(임시)</button>
+              </div>
+
+              <hr class="sep"/>
+
+              <h4>오늘 과목 목록</h4>
+              <ul id="subjectList" class="list"></ul>
+
+              <div class="hintBox">
+                <div class="hintTitle">목표 표시(임시)</div>
+                <div id="goalOutput" class="muted small">과목을 추가한 뒤 “목표 자동설정(임시)”을 눌러보세요.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 출석 등록 -->
+          <div id="sub-attendance" class="subPanel" style="display:none;">
+            <div class="card">
+              <h3>출석 등록</h3>
+              <p class="muted small">공부 후 입력: 목표/실제 시간, 목표/실제 페이지 → O/△/X 판정(연동 전이라 임시 저장).</p>
+
+              <div class="grid2">
+                <div class="formRow">
+                  <label>오늘 목표 공부 시간(분)</label>
+                  <input id="attGoalMinutes" type="number" min="0" placeholder="예) 120" />
+                </div>
+                <div class="formRow">
+                  <label>오늘 실제 공부 시간(분)</label>
+                  <input id="attActualMinutes" type="number" min="0" placeholder="예) 110" />
+                </div>
+              </div>
+
+              <div class="formRow">
+                <label>과목별 목표/실제 페이지(간단히)</label>
+                <textarea id="attPagesText" rows="4" placeholder="예) 수학: 목표 20 / 실제 18
+영어: 목표 10 / 실제 10"></textarea>
+              </div>
+
+              <div class="rowBetween">
+                <button id="saveAttendanceBtn" class="btn btn-primary">오늘 출석 등록</button>
+                <div class="muted small">등록하면 메인 달력에 표시돼요.</div>
+              </div>
+
+              <div class="hintBox">
+                <div class="hintTitle">판정 규칙</div>
+                <div class="muted small">
+                  분량 다 채우면 <b>O</b><br/>
+                  시간 다 채웠지만 분량 다 못 채우면 <b>△</b><br/>
+                  시간도 다 못 채우면 <b>X</b>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 주간요약 -->
+          <div id="sub-weekly" class="subPanel" style="display:none;">
+            <div class="card">
+              <h3>주간요약</h3>
+              <p class="muted small">일주일에 한 번 생성(연동 후). 지금은 버튼만 동작합니다.</p>
+
+              <button id="weeklySummaryBtn" class="btn btn-primary">주간요약 생성</button>
+
+              <div class="hintBox">
+                <div class="hintTitle">결과(임시)</div>
+                <div id="weeklyOutput" class="muted small">아직 생성된 주간요약이 없어요.</div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- 탭: 랭킹 -->
+        <section id="tab-ranking" class="tab" style="display:none;">
+          <div class="contentHeader">
+            <h2>랭킹</h2>
+            <p class="muted">벌금 순위 / 공부 순위 (연동 전이라 UI만)</p>
+          </div>
+
+          <div class="grid2">
+            <div class="card">
+              <h3>벌금 순위</h3>
+              <div class="muted small">준비중</div>
+              <ul class="list">
+                <li class="listItem"><span>1위</span><span class="muted">-</span></li>
+                <li class="listItem"><span>2위</span><span class="muted">-</span></li>
+                <li class="listItem"><span>3위</span><span class="muted">-</span></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>공부 순위</h3>
+              <div class="muted small">기준(출석/공부량)은 추후 결정</div>
+              <ul class="list">
+                <li class="listItem"><span>1위</span><span class="muted">-</span></li>
+                <li class="listItem"><span>2위</span><span class="muted">-</span></li>
+                <li class="listItem"><span>3위</span><span class="muted">-</span></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </section>
+
+  <!-- 간단 모달(임시) -->
+  <div id="modalOverlay" class="modalOverlay" style="display:none;">
+    <div class="modal">
+      <div class="rowBetween">
+        <h3 id="modalTitle">알림</h3>
+        <button id="modalCloseBtn" class="btn btn-ghost">닫기</button>
+      </div>
+      <div id="modalBody" class="muted"></div>
+      <div class="modalActions">
+        <button id="modalOkBtn" class="btn btn-primary">확인</button>
+      </div>
+    </div>
   </div>
-  
 
-  <h2>내 스터디 그룹</h2>
-
-  <div class="inputRow">
-    <input id="groupInput" type="text" placeholder="새 스터디 그룹 이름" />
-    <button id="createGroupBtn" class="btn btn-primary">그룹 생성</button>
-  </div>
-
-  <ul id="groupList" class="list"></ul>
-</div>
-
- <!-- 스터디 그룹 내부 화면 -->
-<div id="groupDetailPage" style="display: none;">
-  <div class="topbar">
-    <button id="backToGroupsBtn" class="btn btn-ghost">← 그룹 목록</button>
-    <p id="currentGroupTitle" class="user"></p>
-  </div> 
-
-  <h2>그룹 관리</h2>
-
-  <div class="inputRow">
-    <button id="memberManageBtn" class="btn btn-ghost">👥 멤버 관리</button>
-    <button id="planBtn" class="btn btn-primary">📅 개인 스터디 계획 세우기</button>
-  </div>
-
-  <div id="groupDetailHint" style="color:#555; font-size:14px;">
-    위 버튼을 눌러 기능 화면으로 이동할 수 있어요.
-  </div>
-</div>
-
-<!-- 멤버 관리 화면 -->
-<div id="memberPage" style="display:none;">
-  <div class="topbar">
-    <button id="backToGroupDetailFromMemberBtn" class="btn btn-ghost">← 그룹으로</button>
-    <p id="memberTitle" class="user"></p>
-  </div>
-
-  <h2>멤버 관리</h2>
-
-  <!-- 초대 -->
-  <div class="inputRow">
-    <input id="inviteEmailInput" type="email" placeholder="초대할 이메일 (예: someone@gmail.com)" />
-    <button id="inviteMemberBtn" class="btn btn-primary">초대</button>
-  </div>
-
-  <p style="margin-top:0; color:#666; font-size:13px;">
-    * 지금은 UI만 동작해요(임시 저장). 나중에 FastAPI로 실제 초대/승인 붙일 거예요.
-  </p>
-
-  <!-- 멤버 목록 -->
-  <ul id="memberList" class="list"></ul>
-</div>
-
-
- <!-- 개인 스터디 계획 화면 -->
-<div id="planPage" style="display: none;">
-  <div class="topbar">
-    <button id="backToGroupDetailBtn" class="btn btn-ghost">← 그룹으로</button>
-    <p id="planTitle" class="user"></p>
-  </div>
-
-  <h2>내 스터디 계획</h2>
-
-  <div class="inputRow">
-    <input id="subjectInput" type="text" placeholder="과목/공부 항목 (예: 자료구조, 토익 RC)" />
-    <button id="addSubjectBtn" class="btn btn-primary">추가</button>
-  </div>
-
-  <ul id="subjectList" class="list"></ul>
-
-  <div style="margin-top:10px; color:#666; font-size:13px;">
-    * 지금은 브라우저에만 저장돼요(새로고침하면 사라짐). 다음에 FastAPI/DB로 저장하게 만들 거예요.
-  </div>
-</div>
-
-
-
- <script src="js/api.js"></script>
- <script src="js/script.js"></script>
+  <script src="js/api.js"></script>
+<script src="js/script.js"></script>
 
 </body>
 </html>
-
-
