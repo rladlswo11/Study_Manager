@@ -161,9 +161,9 @@
             </div>
             <div id="calendarGrid" class="calendarGrid"></div>
             <div class="legend">
-              <span class="legendItem"><span class="dot ok">O</span> 출석</span>
-              <span class="legendItem"><span class="dot mid">△</span> 부분</span>
-              <span class="legendItem"><span class="dot no">X</span> 결석</span>
+              <span class="legendItem"><span class="dot ok">⭕</span> 출석</span>
+              <span class="legendItem"><span class="dot mid">🚫</span> 부분</span>
+              <span class="legendItem"><span class="dot no">❌</span> 결석</span>
             </div>
           </div>
         </section>
@@ -275,10 +275,33 @@
               </div>
 
               <div class="formRow">
-                <label>과목별 목표/실제 페이지(간단히)</label>
-                <textarea id="attPagesText" rows="4" placeholder="예) 수학: 목표 20 / 실제 18
-영어: 목표 10 / 실제 10"></textarea>
+                <label>과목별 목표/실제 페이지</label>
+
+                <div class="grid3">
+                  <div class="formRow">
+                    <label>과목</label>
+                    <input id="attSubjectName" type="text" placeholder="예) 수학" />
+                  </div>
+
+                  <div class="formRow">
+                    <label>목표 페이지</label>
+                    <input id="attGoalPages" type="number" min="0" placeholder="예) 10" />
+                  </div>
+
+                  <div class="formRow">
+                    <label>실제 페이지</label>
+                    <input id="attActualPages" type="number" min="0" placeholder="예) 12" />
+                  </div>
+                </div>
+
+                <div class="rowBetween" style="margin-top:8px;">
+                  <button id="addAttPageBtn" class="btn btn-secondary">과목 추가</button>
+                  <div class="muted small">추가하면 아래 목록에 쌓여요.</div>
+                </div>
+
+                <ul id="attPageList" class="list"></ul>
               </div>
+
 
               <div class="rowBetween">
                 <button id="saveAttendanceBtn" class="btn btn-primary">오늘 출석 등록</button>

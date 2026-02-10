@@ -82,6 +82,16 @@ input, textarea {
   .groupHeader { flex-direction: column; align-items: stretch; gap: 12px; }
 }
 
+.grid3 { 
+  display:grid; 
+  grid-template-columns: 1fr 1fr 1fr; 
+  gap: 14px; 
+}
+
+@media (max-width: 900px) {
+  .grid3 { grid-template-columns: 1fr; }
+}
+
 /* 리스트 */
 .list { list-style: none; padding: 0; margin: 10px 0 0; }
 .listItem, .list li {
@@ -190,14 +200,42 @@ input, textarea {
   padding: 8px;
   min-height: 64px;
   background: #fff;
+
+  position: relative;
 }
-.dayNum { font-size: 12px; font-weight: 900; color:#374151; }
-.mark {
-  margin-top: 8px;
-  font-size: 16px;
+.dayNum{
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 12px;
   font-weight: 900;
+  color: #374151;
 }
-.dot { display:inline-block; width: 18px; height: 18px; border-radius: 6px; text-align:center; line-height: 18px; font-weight: 900; font-size: 12px; }
+.mark{
+  position: absolute;   /* ✅ 셀 기준으로 띄우기 */
+  inset: 0;             /* ✅ top/right/bottom/left = 0 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 0;        /* ✅ 기존 margin 제거 */
+  font-size: 28px;      /* ✅ 날짜 아이콘 크게(원하는대로 조절) */
+  font-weight: 900;
+  pointer-events: none; /* ✅ 아이콘이 클릭 방해 안 하게 */
+}
+
+.dot{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;          /* ✅ 아이콘 영역 크게 */
+  height: 40px;
+  border-radius: 12px;  /* ✅ 둥글게 */
+  line-height: 1;       /* ✅ 이모지 수직정렬 안정 */
+  font-weight: 900;
+  font-size: 20px;      /* ✅ 이모지 크기 */
+}
 .dot.ok { background:#dcfce7; color:#166534; }
 .dot.mid { background:#fef9c3; color:#854d0e; }
 .dot.no { background:#fee2e2; color:#991b1b; }

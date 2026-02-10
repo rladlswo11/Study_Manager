@@ -3,6 +3,13 @@
 // =====================
 const STORAGE_KEY = "study_manager_mock_v1";
 
+// 출석 표시 아이콘 매핑
+const ATT_ICON = {
+  "O": "⭕",
+  "△": "🚫",
+  "X": "❌"
+};
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -55,6 +62,9 @@ let timerIntervalId = null;
 // 캘린더 UI 상태
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth(); // 0-11
+
+// 출석(과목별 페이지) 임시 입력 목록
+let attPageItems = [];
 
 // =====================
 // DOM helpers
@@ -560,32 +570,17 @@ function saveAttendanceToday() {
   const me = appState.currentUser.email;
   const goalMin = Number($("attGoalMinutes").value);
   const actualMin = Number($("attActualMinutes").value);
-  const pagesText = $("attPagesText").value.trim();
 
   if (Number.isNaN(goalMin) || Number.isNaN(actualMin)) {
     return openModal("출석 등록", "목표/실제 시간을 숫자로 입력해줘!");
   }
 
-  // 분량 충족 여부는 임시로 텍스트에 '목표'와 '실제'가 있고 실제>=목표 항목이 모두 충족이면 OK로 간주(대충)
-  // 실제 로직은 나중에 과목 목표/실제 값을 구조화해서 계산하면 됨.
-  let pagesOk = false;
-  if (!pagesText) {
-    pagesOk = false;
-  } else {
-    // "목표 20 / 실제 18" 같은 줄을 찾아 비교
-    const lines = pagesText.split("\n").map(s => s.trim()).filter(Boolean);
-    let any = 0, ok = 0;
-    for (const line of lines) {
-      const m = line.match(/목표\s*(\d+)\s*\/?\s*실제\s*(\d+)/);
-      if (m) {
-        any += 1;
-        const goal = Number(m[1]);
-        const act = Number(m[2]);
-        if (act >= goal) ok += 1;
-      }
-    }
-    pagesOk = (any > 0 && ok === any);
-  }
+  // ✅ 분량 충족: 과목이 1개 이상 있고, 모든 과목에서 실제 >= 목표면 OK
+  const pagesOk = (attPageItems.length > 0) && attPageItems.every(it => it.actualPages >= it.goalPages);
+  
+  attPageItems = [];
+  renderAttPageList();
+
 
   let mark = "X";
   if (pagesOk) mark = "O";
@@ -602,7 +597,73 @@ function saveAttendanceToday() {
   renderCalendar();
 }
 
+function renderAttPageList() {
+  const ul = $("attPageList");
+  if (!ul) return;
+
+  ul.innerHTML = "";
+
+  if (!attPageItems.length) {
+    const li = document.createElement("li");
+    li.className = "listItem";
+    li.innerHTML = `<span class="muted">아직 추가된 과목이 없어요. 위에서 과목/목표/실제를 입력하고 “과목 추가”를 눌러줘!</span>`;
+    ul.appendChild(li);
+    return;
+  }
+
+  attPageItems.forEach((it, idx) => {
+    const li = document.createElement("li");
+    li.className = "listItem";
+    li.innerHTML = `
+      <span>
+        <b>${it.name}</b>
+        <span class="muted small">· 목표 ${it.goalPages}p · 실제 ${it.actualPages}p</span>
+      </span>
+      <button class="btn btn-ghost">삭제</button>
+    `;
+    li.querySelector("button").addEventListener("click", () => {
+      attPageItems.splice(idx, 1);
+      renderAttPageList();
+    });
+    ul.appendChild(li);
+  });
+}
+
+function addAttPageItem() {
+  const name = $("attSubjectName")?.value.trim();
+  const goalPages = Number($("attGoalPages")?.value);
+  const actualPages = Number($("attActualPages")?.value);
+
+  if (!name) return openModal("출석 등록", "과목 이름을 입력해줘!");
+  if ([goalPages, actualPages].some(x => Number.isNaN(x))) {
+    return openModal("출석 등록", "목표/실제 페이지를 숫자로 입력해줘!");
+  }
+  if (goalPages < 0 || actualPages < 0) {
+    return openModal("출석 등록", "페이지는 0 이상으로 입력해줘!");
+  }
+
+  attPageItems.push({ name, goalPages, actualPages });
+
+  $("attSubjectName").value = "";
+  $("attGoalPages").value = "";
+  $("attActualPages").value = "";
+
+  renderAttPageList();
+}
+
+$("addAttPageBtn").addEventListener("click", addAttPageItem);
+
+// Enter로 과목 추가
+["attSubjectName", "attGoalPages", "attActualPages"].forEach((id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") addAttPageItem();
+  });
+});
+
 $("saveAttendanceBtn").addEventListener("click", saveAttendanceToday);
+
 
 // =====================
 // 주간요약 버튼 (임시)
@@ -664,7 +725,7 @@ function renderAttendanceSummary() {
     }
   });
 
-  $("attendanceSummary").textContent = `O ${o} · △ ${d} · X ${x}`;
+  $("attendanceSummary").textContent = `⭕ ${o} · 🚫 ${d} · ❌ ${x}`;
 }
 
 function renderCalendar() {
@@ -710,7 +771,12 @@ function renderCalendar() {
 
     cell.innerHTML = `
       <div class="dayNum">${d}</div>
-      <div class="mark">${mark ? `<span class="dot ${mark==='O'?'ok':(mark==='△'?'mid':'no')}">${mark}</span>` : ""}</div>
+      <div class="mark">
+        ${mark ? `<span class="dot ${mark==='O'?'ok':(mark==='△'?'mid':'no')}">
+          ${ATT_ICON[mark]}
+        </span>` : ""}
+      </div>
+
     `;
 
     // 클릭하면 해당 날짜 메모/등록으로 연결할 수도 있음(추후)
