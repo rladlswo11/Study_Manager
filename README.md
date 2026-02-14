@@ -16,6 +16,7 @@ Google 로그인을 지원하는 스터디 관리 프로젝트
 python -m venv venv
 
 .\venv\Scripts\activate  # Windows
+.\venv\Scripts\Activate.ps1 도되네요
 # (venv) 나오면 성공
 ```
 
@@ -53,6 +54,7 @@ AUTHLIB_INSECURE_TRANSPORT=true
    * OpenAPI JSON 확인 : https://evie-lawyerly-maxima.ngrok-free.dev/openapi.json
    * 요청 들어오는지 확인 : http://127.0.0.1:4040
    * 이렇게 reload해야된다네요 : py -3 -m uvicorn app.main:app --reload --port 8000 --proxy-headers --forwarded-allow-ips="*"
+
 
 
 
