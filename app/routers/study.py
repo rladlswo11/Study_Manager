@@ -94,6 +94,42 @@ def leave_study(
     return {"message": "스터디에서 탈퇴했습니다."}
 
 
+@router.delete("/{study_id}/delete")
+def delete_study(
+    study_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    # 1. 내 멤버십 정보와 역할을 조회
+    membership = db.query(StudyMember).filter(
+        StudyMember.study_id == study_id,
+        StudyMember.user_id == current_user.id
+    ).first()
+
+    # 2. 권한 검증
+    if not membership:
+        raise HTTPException(status_code=404, detail="스터디 멤버가 아닙니다.")
+    
+    # role이 'owner'인 경우만 삭제 가능하도록 설정
+    if membership.role != "owner":
+        raise HTTPException(status_code=403, detail="방장(owner)만 스터디를 삭제할 수 있습니다.")
+
+    # 3. 스터디 조회 및 삭제
+    study = db.query(Study).filter(Study.id == study_id).first()
+    if not study:
+        raise HTTPException(status_code=404, detail="스터디를 찾을 수 없습니다.")
+
+    try:
+        # 스터디를 삭제하면 Cascade 설정에 따라 멤버들도 함께 지워집니다.
+        db.delete(study)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="삭제 처리 중 오류가 발생했습니다.")
+
+    return {"message": f"'{study.name}' 스터디가 삭제되었습니다."}
+
+
 # ✅ owner만: 초대 링크 생성 (기본 무기한)
 @router.post("/{study_id}/invites", response_model=InviteCreateResponse)
 def create_invite(
