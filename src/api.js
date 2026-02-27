@@ -56,4 +56,3 @@ export function apiDeleteStudy(studyId) {
     method: "DELETE",
   });
 }
-
