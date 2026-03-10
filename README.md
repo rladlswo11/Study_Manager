@@ -55,6 +55,8 @@ AUTHLIB_INSECURE_TRANSPORT=true
    * OpenAPI JSON 확인 : https://evie-lawyerly-maxima.ngrok-free.dev/openapi.json
    * 요청 들어오는지 확인 : http://127.0.0.1:4040
    * 이렇게 reload해야된다네요 : py -3 -m uvicorn app.main:app --reload --port 8000 --proxy-headers --forwarded-allow-ips="*"
+   * ngrok http 8000
+
 
 
 
